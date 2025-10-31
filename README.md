@@ -1,2 +1,2 @@
 # testosterone-tracker
-** For Educational / Self-tracking use only **
+**For Educational / Self-tracking use only**
