@@ -13,6 +13,21 @@ type User {
     logs: [Log!]!
 }
 
+input RegisterInput {
+    first_name: String!
+    last_name: String!
+    gender: String!
+    email: String!
+    age: Int
+    password: String!
+    confirm_password: String!
+}
+
+input LoginInput {
+    email: String!
+    password: String!
+}
+
 type Log {
     id: ID!
     user_id: ID!
@@ -57,4 +72,6 @@ type Query {
 type Mutation {
     createUser(input: NewUserInput!): User!
     createLog(input: LogInput!): Log!
+    register(input: RegisterInput!): User!
+    login(input: LoginInput!): User!
 }

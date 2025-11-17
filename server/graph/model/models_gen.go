@@ -28,6 +28,11 @@ type LogInput struct {
 	Notes           *string `json:"notes,omitempty"`
 }
 
+type LoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type Mutation struct {
 }
 
@@ -41,6 +46,16 @@ type NewUserInput struct {
 }
 
 type Query struct {
+}
+
+type RegisterInput struct {
+	FirstName       string `json:"first_name"`
+	LastName        string `json:"last_name"`
+	Gender          string `json:"gender"`
+	Email           string `json:"email"`
+	Age             *int32 `json:"age,omitempty"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
 }
 
 type User struct {

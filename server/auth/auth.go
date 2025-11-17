@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/SBPH-Matthew/testosterone-tracker/graph/model"
 	"github.com/go-pg/pg/v10"
 )
 
@@ -12,6 +11,11 @@ var userCtxKey = &contextKey{"user"}
 
 type contextKey struct {
 	name string
+}
+
+type AuthUser struct {
+	Name   string
+	IsAuth bool
 }
 
 func Middleware(db *pg.DB) func(http.Handler) http.Handler {
@@ -24,16 +28,9 @@ func Middleware(db *pg.DB) func(http.Handler) http.Handler {
 				return
 			}
 
-			var myInt int32 = 24
-
-			user := &model.User{
-				FirstName: "Hello",
-				LastName:  "World",
-				Email:     "hello.world@gmail.com",
-				ID:        "Testing",
-				Gender:    "Male",
-				Age:       &myInt,
-				Password:  "testinggaming",
+			user := &AuthUser{
+				Name:   "Hello World",
+				IsAuth: true,
 			}
 
 			ctx := context.WithValue(r.Context(), userCtxKey, user)
@@ -46,7 +43,7 @@ func Middleware(db *pg.DB) func(http.Handler) http.Handler {
 	}
 }
 
-func ForContext(ctx context.Context) *model.User {
-	raw, _ := ctx.Value(userCtxKey).(*model.User)
+func ForContext(ctx context.Context) *AuthUser {
+	raw, _ := ctx.Value(userCtxKey).(*AuthUser)
 	return raw
 }

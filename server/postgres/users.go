@@ -1,8 +1,11 @@
 package postgres
 
 import (
+	"fmt"
+
 	"github.com/SBPH-Matthew/testosterone-tracker/graph/model"
 	"github.com/go-pg/pg/v10"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UsersRepo struct {
@@ -69,4 +72,37 @@ func (m *UsersRepo) CreateUser(input model.NewUserInput) (*model.User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+func (m *UsersRepo) RegisterUser(input model.RegisterInput) (*model.User, error) {
+	hashedPassword, err := HashPassword(input.Password)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to hash password %w", err)
+	}
+
+	user := &model.User{
+		FirstName: input.FirstName,
+		LastName:  input.LastName,
+		Gender:    input.Gender,
+		Password:  string(hashedPassword),
+		Email:     input.Email,
+		Age:       input.Age,
+	}
+
+	_, insertError := m.DB.Model(user).Insert()
+	if insertError != nil {
+		return nil, insertError
+	}
+
+	return user, nil
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+	return string(bytes), err
+}
+
+func CheckPassword(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

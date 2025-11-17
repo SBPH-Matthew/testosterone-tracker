@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/SBPH-Matthew/testosterone-tracker/auth"
 	"github.com/SBPH-Matthew/testosterone-tracker/graph/model"
 )
 
@@ -18,7 +19,26 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUserIn
 
 // CreateLog is the resolver for the createLog field.
 func (r *mutationResolver) CreateLog(ctx context.Context, input model.LogInput) (*model.Log, error) {
-	panic(fmt.Errorf("not implemented: CreateLog - createLog"))
+	if user := auth.ForContext(ctx); user == nil || !user.IsAuth {
+		return nil, fmt.Errorf("Access denied")
+	}
+
+	panic(fmt.Errorf("not implemented: createlog - createlog"))
+}
+
+// Register is the resolver for the register field.
+func (r *mutationResolver) Register(ctx context.Context, input model.RegisterInput) (*model.User, error) {
+	if input.Password != input.ConfirmPassword {
+		return nil, fmt.Errorf("passwords do not match.")
+	}
+
+	// panic(fmt.Errorf("not implemented: Register - register"))
+	return r.UsersRepo.RegisterUser(input)
+}
+
+// Login is the resolver for the login field.
+func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: Login - login"))
 }
 
 // Users is the resolver for the users field.
