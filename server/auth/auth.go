@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -25,6 +26,13 @@ func Middleware(db *pg.DB) func(http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 				return
 			}
+
 		})
+
 	}
+}
+
+func ForContext(ctx context.Context) *User {
+	raw, _ := ctx.Value(userCtxKey).(*User)
+	return raw
 }
