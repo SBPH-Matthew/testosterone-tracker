@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/SBPH-Matthew/testosterone-tracker/graph/model"
 )
@@ -13,6 +14,11 @@ import (
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUserInput) (*model.User, error) {
 	return r.UsersRepo.CreateUser(input)
+}
+
+// CreateLog is the resolver for the createLog field.
+func (r *mutationResolver) CreateLog(ctx context.Context, input model.LogInput) (*model.Log, error) {
+	panic(fmt.Errorf("not implemented: CreateLog - createLog"))
 }
 
 // Users is the resolver for the users field.

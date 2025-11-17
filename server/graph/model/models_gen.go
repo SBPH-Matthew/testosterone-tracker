@@ -2,14 +2,33 @@
 
 package model
 
-type Mutation struct {
+type Log struct {
+	ID              string  `json:"id"`
+	UserID          string  `json:"user_id"`
+	LogDate         string  `json:"log_date"`
+	EnergyLevel     int32   `json:"energy_level"`
+	Mood            int32   `json:"mood"`
+	Libido          int32   `json:"libido"`
+	SleepHours      float64 `json:"sleep_hours"`
+	ExerciseMinutes float64 `json:"exercise_minutes"`
+	StressLevel     int32   `json:"stress_level"`
+	Notes           *string `json:"notes,omitempty"`
+	CreatedAt       string  `json:"created_at"`
 }
 
-type NewEntryInput struct {
-	Level float64 `json:"level"`
-	Unit  string  `json:"unit"`
-	Date  string  `json:"date"`
-	Notes *string `json:"notes,omitempty"`
+type LogInput struct {
+	UserID          string  `json:"user_id"`
+	LogDate         string  `json:"log_date"`
+	EnergyLevel     int32   `json:"energy_level"`
+	Mood            int32   `json:"mood"`
+	Libido          int32   `json:"libido"`
+	SleepHours      float64 `json:"sleep_hours"`
+	ExerciseMinutes float64 `json:"exercise_minutes"`
+	StressLevel     int32   `json:"stress_level"`
+	Notes           *string `json:"notes,omitempty"`
+}
+
+type Mutation struct {
 }
 
 type NewUserInput struct {
@@ -24,15 +43,6 @@ type NewUserInput struct {
 type Query struct {
 }
 
-type TestosteroneEntry struct {
-	ID    string  `json:"id"`
-	User  *User   `json:"user"`
-	Level float64 `json:"level"`
-	Unit  string  `json:"unit"`
-	Date  string  `json:"date"`
-	Notes *string `json:"notes,omitempty"`
-}
-
 type User struct {
 	ID        string `json:"id"`
 	FirstName string `json:"first_name"`
@@ -41,4 +51,5 @@ type User struct {
 	Email     string `json:"email"`
 	Age       *int32 `json:"age,omitempty"`
 	Password  string `json:"password"`
+	Logs      []*Log `json:"logs"`
 }

@@ -12,13 +12,23 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/SBPH-Matthew/testosterone-tracker/graph"
 	"github.com/SBPH-Matthew/testosterone-tracker/postgres"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-pg/pg/v10"
+	"github.com/rs/cors"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
 const defaultPort = "8080"
 
 func main() {
+	router := chi.NewRouter()
+
+	router.Use(cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowCredentials: true,
+		Debug:            true,
+	}).Handler)
+
 	DB := postgres.New(&pg.Options{
 		User:     "postgres",
 		Password: "",
@@ -49,9 +59,13 @@ func main() {
 		Cache: lru.New[string](100),
 	})
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/query", srv)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+
+	err := http.ListenAndServe(":"+port, router)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -10,22 +10,32 @@ type User {
     email: String!
     age: Int
     password: String!
-    # entries: [TestosteroneEntry!]!
+    logs: [Log!]!
 }
 
-type TestosteroneEntry {
+type Log {
     id: ID!
-    user: User!
-    level: Float!
-    unit: String!
-    date: String!
+    user_id: ID!
+    log_date: String!
+    energy_level: Int!
+    mood: Int!
+    libido: Int!
+    sleep_hours: Float!
+    exercise_minutes: Float!
+    stress_level: Int!
     notes: String
+    created_at: String!
 }
 
-input NewEntryInput {
-    level: Float!
-    unit: String!
-    date: String!
+input LogInput {
+    user_id: ID!
+    log_date: String!
+    energy_level: Int!
+    mood: Int!
+    libido: Int!
+    sleep_hours: Float!
+    exercise_minutes: Float!
+    stress_level: Int!
     notes: String
 }
 
@@ -40,10 +50,11 @@ input NewUserInput {
 
 type Query {
     users: [User!]!
+
     # user(id: ID!): User
-    # entries(userId: ID!): [TestosteroneEntry!]!
 }
 
 type Mutation {
     createUser(input: NewUserInput!): User!
+    createLog(input: LogInput!): Log!
 }
