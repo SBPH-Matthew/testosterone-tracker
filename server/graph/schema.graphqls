@@ -11,6 +11,7 @@ type User {
     age: Int
     password: String!
     logs: [Log!]!
+    token: String
 }
 
 input RegisterInput {

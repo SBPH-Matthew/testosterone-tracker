@@ -10,6 +10,7 @@ import (
 
 	"github.com/SBPH-Matthew/testosterone-tracker/auth"
 	"github.com/SBPH-Matthew/testosterone-tracker/graph/model"
+	"github.com/SBPH-Matthew/testosterone-tracker/services"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -38,7 +39,24 @@ func (r *mutationResolver) Register(ctx context.Context, input model.RegisterInp
 
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: Login - login"))
+	// panic(fmt.Errorf("not implemented: Login - login"))
+	user, err := r.UsersRepo.GetUserByEmail(input.Email)
+	if err != nil {
+		return nil, fmt.Errorf("email not found in the databases.")
+	}
+
+	if !services.CheckPassword(input.Password, user.Password) {
+		return nil, fmt.Errorf("invalid password.")
+	}
+
+	token, err := services.GenerateToken(user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate token: %w", err)
+	}
+
+	user.Token = &token
+
+	return user, nil
 }
 
 // Users is the resolver for the users field.

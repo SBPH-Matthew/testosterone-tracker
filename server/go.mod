@@ -6,6 +6,8 @@ require (
 	github.com/99designs/gqlgen v0.17.81
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-pg/pg/v10 v10.15.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/rs/cors v1.11.1
 	github.com/vektah/gqlparser/v2 v2.5.30
 	github.com/vikstrous/dataloadgen v0.0.10

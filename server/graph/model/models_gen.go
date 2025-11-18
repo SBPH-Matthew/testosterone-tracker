@@ -59,12 +59,13 @@ type RegisterInput struct {
 }
 
 type User struct {
-	ID        string `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Gender    string `json:"gender"`
-	Email     string `json:"email"`
-	Age       *int32 `json:"age,omitempty"`
-	Password  string `json:"password"`
-	Logs      []*Log `json:"logs"`
+	ID        string  `json:"id"`
+	FirstName string  `json:"first_name"`
+	LastName  string  `json:"last_name"`
+	Gender    string  `json:"gender"`
+	Email     string  `json:"email"`
+	Age       *int32  `json:"age,omitempty"`
+	Password  string  `json:"password"`
+	Logs      []*Log  `json:"logs"`
+	Token     *string `json:"token,omitempty" pg:"-"`
 }

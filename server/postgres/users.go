@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/SBPH-Matthew/testosterone-tracker/graph/model"
+	"github.com/SBPH-Matthew/testosterone-tracker/services"
 	"github.com/go-pg/pg/v10"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UsersRepo struct {
@@ -75,7 +75,7 @@ func (m *UsersRepo) CreateUser(input model.NewUserInput) (*model.User, error) {
 }
 
 func (m *UsersRepo) RegisterUser(input model.RegisterInput) (*model.User, error) {
-	hashedPassword, err := HashPassword(input.Password)
+	hashedPassword, err := services.HashPassword(input.Password)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to hash password %w", err)
 	}
@@ -109,14 +109,4 @@ func (m *UsersRepo) GetUserByEmail(email string) (*model.User, error) {
 	}
 
 	return &user, nil
-}
-
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 12)
-	return string(bytes), err
-}
-
-func CheckPassword(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
 }
