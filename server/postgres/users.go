@@ -97,6 +97,20 @@ func (m *UsersRepo) RegisterUser(input model.RegisterInput) (*model.User, error)
 	return user, nil
 }
 
+func (m *UsersRepo) GetUserByEmail(email string) (*model.User, error) {
+	var user model.User
+
+	err := m.DB.Model(&user).
+		Where("email = ?", email).
+		First()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	return string(bytes), err
