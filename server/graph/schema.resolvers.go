@@ -20,7 +20,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUserIn
 
 // CreateLog is the resolver for the createLog field.
 func (r *mutationResolver) CreateLog(ctx context.Context, input model.LogInput) (*model.Log, error) {
-	if user := auth.ForContext(ctx); user == nil || !user.IsAuth {
+	if user := auth.ForContext(ctx); user == nil {
 		return nil, fmt.Errorf("Access denied")
 	}
 
@@ -33,8 +33,21 @@ func (r *mutationResolver) Register(ctx context.Context, input model.RegisterInp
 		return nil, fmt.Errorf("passwords do not match.")
 	}
 
-	// panic(fmt.Errorf("not implemented: Register - register"))
-	return r.UsersRepo.RegisterUser(input)
+	dbUser, err := r.UsersRepo.RegisterUser(input)
+	if err != nil {
+		return nil, err
+	}
+
+	gqlUser := &model.User{
+		ID:        dbUser.ID,
+		FirstName: dbUser.FirstName,
+		LastName:  dbUser.LastName,
+		Gender:    dbUser.Gender,
+		Email:     dbUser.Email,
+		Age:       dbUser.Age,
+	}
+
+	return gqlUser, nil
 }
 
 // Login is the resolver for the login field.
@@ -62,6 +75,16 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return r.UsersRepo.GetUsers()
+}
+
+// Me is the resolver for the me field.
+func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return nil, fmt.Errorf("unauthenticated")
+	}
+
+	return user, nil
 }
 
 // Mutation returns MutationResolver implementation.

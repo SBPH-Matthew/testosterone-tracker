@@ -66,6 +66,7 @@ input NewUserInput {
 
 type Query {
     users: [User!]!
+    me: User
 
     # user(id: ID!): User
 }

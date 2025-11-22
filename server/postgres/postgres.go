@@ -22,5 +22,8 @@ func (d DBLogger) AfterQuery(ctx context.Context, q *pg.QueryEvent) error {
 }
 
 func New(opts *pg.Options) *pg.DB {
-	return pg.Connect(opts)
+	// return pg.Connect(opts)
+	db := pg.Connect(opts)
+	db.AddQueryHook(DBLogger{})
+	return db
 }

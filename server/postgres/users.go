@@ -3,6 +3,7 @@ package postgres
 import (
 	"fmt"
 
+	"github.com/SBPH-Matthew/testosterone-tracker/dbmodels"
 	"github.com/SBPH-Matthew/testosterone-tracker/graph/model"
 	"github.com/SBPH-Matthew/testosterone-tracker/services"
 	"github.com/go-pg/pg/v10"
@@ -74,13 +75,13 @@ func (m *UsersRepo) CreateUser(input model.NewUserInput) (*model.User, error) {
 	return user, nil
 }
 
-func (m *UsersRepo) RegisterUser(input model.RegisterInput) (*model.User, error) {
+func (m *UsersRepo) RegisterUser(input model.RegisterInput) (*dbmodels.User, error) {
 	hashedPassword, err := services.HashPassword(input.Password)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to hash password %w", err)
 	}
 
-	user := &model.User{
+	user := &dbmodels.User{
 		FirstName: input.FirstName,
 		LastName:  input.LastName,
 		Gender:    input.Gender,

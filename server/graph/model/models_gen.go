@@ -67,5 +67,5 @@ type User struct {
 	Age       *int32  `json:"age,omitempty"`
 	Password  string  `json:"password"`
 	Logs      []*Log  `json:"logs"`
-	Token     *string `json:"token,omitempty" pg:"-"`
+	Token     *string `json:"token,omitempty"`
 }
