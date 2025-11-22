@@ -99,15 +99,26 @@ func (m *UsersRepo) RegisterUser(input model.RegisterInput) (*dbmodels.User, err
 }
 
 func (m *UsersRepo) GetUserByEmail(email string) (*model.User, error) {
-	var user model.User
+	var dbUser dbmodels.User
 
-	err := m.DB.Model(&user).
+	err := m.DB.Model(&dbUser).
 		Where("email = ?", email).
-		First()
+		Select()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	// Convert DB model → GraphQL model
+	gqlUser := &model.User{
+		ID:        dbUser.ID,
+		FirstName: dbUser.FirstName,
+		LastName:  dbUser.LastName,
+		Gender:    dbUser.Gender,
+		Email:     dbUser.Email,
+		Age:       dbUser.Age,
+		Password:  dbUser.Password, // needed for Login
+	}
+
+	return gqlUser, nil
 }

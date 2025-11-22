@@ -2,8 +2,11 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"strings"
 
+	"github.com/SBPH-Matthew/testosterone-tracker/dbmodels"
 	"github.com/SBPH-Matthew/testosterone-tracker/graph/model"
 	"github.com/SBPH-Matthew/testosterone-tracker/services"
 	"github.com/go-pg/pg/v10"
@@ -45,26 +48,42 @@ func Middleware(db *pg.DB) func(http.Handler) http.Handler {
 
 	}
 }
-
 func MiddlewareV2(db *pg.DB) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Get token from cookie
 
-			c, err := r.Cookie("auth-cookie")
-			if err != nil || c == nil {
+			var tokenString string
+
+			// 1. Check Authorization header
+			authHeader := r.Header.Get("Authorization")
+			if authHeader != "" {
+				fmt.Println("Found Authorization header:", authHeader)
+				if strings.HasPrefix(authHeader, "Bearer ") {
+					tokenString = strings.TrimPrefix(authHeader, "Bearer ")
+				}
+			}
+
+			// 2. If no header, try cookie
+			if tokenString == "" {
+				c, err := r.Cookie("auth-cookie")
+				if err == nil {
+					tokenString = c.Value
+				}
+			}
+
+			// If still no token → user stays unauthenticated
+			if tokenString == "" {
 				next.ServeHTTP(w, r)
 				return
 			}
 
 			// Validate token
-			token, err := services.ValidateToken(c.Value)
+			token, err := services.ValidateToken(tokenString)
 			if err != nil || !token.Valid {
 				next.ServeHTTP(w, r)
 				return
 			}
 
-			// Extract user id from claims
 			claims, ok := token.Claims.(jwt.MapClaims)
 			if !ok {
 				next.ServeHTTP(w, r)
@@ -77,17 +96,27 @@ func MiddlewareV2(db *pg.DB) func(http.Handler) http.Handler {
 				return
 			}
 
-			// Fetch user from database
-			user := &model.User{}
+			// Fetch user
+			user := &dbmodels.User{}
 			err = db.Model(user).Where("id = ?", userID).First()
 			if err != nil {
 				next.ServeHTTP(w, r)
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), userCtxKey, user)
-			r = r.WithContext(ctx)
-			next.ServeHTTP(w, r)
+			graphQlUser := &model.User{
+				ID:        user.ID,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+				Email:     user.Email,
+				Password:  user.Password,
+				Gender:    user.Gender,
+				Age:       user.Age,
+				Token:     &tokenString,
+			}
+
+			ctx := context.WithValue(r.Context(), userCtxKey, graphQlUser)
+			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }

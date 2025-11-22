@@ -10,6 +10,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/SBPH-Matthew/testosterone-tracker/auth"
 	"github.com/SBPH-Matthew/testosterone-tracker/graph"
 	"github.com/SBPH-Matthew/testosterone-tracker/postgres"
 	"github.com/go-chi/chi/v5"
@@ -38,6 +39,8 @@ func main() {
 	defer DB.Close()
 
 	DB.AddQueryHook(postgres.DBLogger{})
+
+	router.Use(auth.MiddlewareV2(DB))
 
 	port := os.Getenv("PORT")
 	if port == "" {
