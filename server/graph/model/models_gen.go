@@ -17,8 +17,6 @@ type Log struct {
 }
 
 type LogInput struct {
-	UserID          string  `json:"user_id"`
-	LogDate         string  `json:"log_date"`
 	EnergyLevel     int32   `json:"energy_level"`
 	Mood            int32   `json:"mood"`
 	Libido          int32   `json:"libido"`

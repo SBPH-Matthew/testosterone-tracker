@@ -49,6 +49,7 @@ func main() {
 
 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
 		UsersRepo: postgres.UsersRepo{DB: DB},
+		LogsRepo:  postgres.LogsRepo{DB: DB},
 	}}))
 
 	srv.AddTransport(transport.Options{})

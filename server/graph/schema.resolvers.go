@@ -72,6 +72,21 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*
 	return user, nil
 }
 
+// NewLog is the resolver for the newLog field.
+func (r *mutationResolver) NewLog(ctx context.Context, input model.LogInput) (*model.Log, error) {
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return nil, fmt.Errorf("unauthenticated")
+	}
+
+	return r.LogsRepo.CreateLogs(input, user.ID)
+}
+
+// MyLogs is the resolver for the myLogs field.
+func (r *mutationResolver) MyLogs(ctx context.Context) ([]*model.Log, error) {
+	panic(fmt.Errorf("not implemented: MyLogs - myLogs"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return r.UsersRepo.GetUsers()

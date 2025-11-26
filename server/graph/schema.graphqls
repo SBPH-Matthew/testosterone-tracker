@@ -44,8 +44,6 @@ type Log {
 }
 
 input LogInput {
-    user_id: ID!
-    log_date: String!
     energy_level: Int!
     mood: Int!
     libido: Int!
@@ -76,4 +74,7 @@ type Mutation {
     createLog(input: LogInput!): Log!
     register(input: RegisterInput!): User!
     login(input: LoginInput!): User!
+
+    newLog(input: LogInput!): Log!
+    myLogs: [Log!]!
 }

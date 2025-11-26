@@ -65,6 +65,8 @@ type ComplexityRoot struct {
 		CreateLog  func(childComplexity int, input model.LogInput) int
 		CreateUser func(childComplexity int, input model.NewUserInput) int
 		Login      func(childComplexity int, input model.LoginInput) int
+		MyLogs     func(childComplexity int) int
+		NewLog     func(childComplexity int, input model.LogInput) int
 		Register   func(childComplexity int, input model.RegisterInput) int
 	}
 
@@ -91,6 +93,8 @@ type MutationResolver interface {
 	CreateLog(ctx context.Context, input model.LogInput) (*model.Log, error)
 	Register(ctx context.Context, input model.RegisterInput) (*model.User, error)
 	Login(ctx context.Context, input model.LoginInput) (*model.User, error)
+	NewLog(ctx context.Context, input model.LogInput) (*model.Log, error)
+	MyLogs(ctx context.Context) ([]*model.Log, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
@@ -216,6 +220,23 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.LoginInput)), true
+	case "Mutation.myLogs":
+		if e.complexity.Mutation.MyLogs == nil {
+			break
+		}
+
+		return e.complexity.Mutation.MyLogs(childComplexity), true
+	case "Mutation.newLog":
+		if e.complexity.Mutation.NewLog == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_newLog_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.NewLog(childComplexity, args["input"].(model.LogInput)), true
 	case "Mutation.register":
 		if e.complexity.Mutation.Register == nil {
 			break
@@ -450,6 +471,17 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 	var err error
 	args := map[string]any{}
 	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNLoginInput2githubᚗcomᚋSBPHᚑMatthewᚋtestosteroneᚑtrackerᚋgraphᚋmodelᚐLoginInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_newLog_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNLogInput2githubᚗcomᚋSBPHᚑMatthewᚋtestosteroneᚑtrackerᚋgraphᚋmodelᚐLogInput)
 	if err != nil {
 		return nil, err
 	}
@@ -1094,6 +1126,124 @@ func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, fie
 	if fc.Args, err = ec.field_Mutation_login_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_newLog(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_newLog,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().NewLog(ctx, fc.Args["input"].(model.LogInput))
+		},
+		nil,
+		ec.marshalNLog2ᚖgithubᚗcomᚋSBPHᚑMatthewᚋtestosteroneᚑtrackerᚋgraphᚋmodelᚐLog,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_newLog(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Log_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Log_user_id(ctx, field)
+			case "log_date":
+				return ec.fieldContext_Log_log_date(ctx, field)
+			case "energy_level":
+				return ec.fieldContext_Log_energy_level(ctx, field)
+			case "mood":
+				return ec.fieldContext_Log_mood(ctx, field)
+			case "libido":
+				return ec.fieldContext_Log_libido(ctx, field)
+			case "sleep_hours":
+				return ec.fieldContext_Log_sleep_hours(ctx, field)
+			case "exercise_minutes":
+				return ec.fieldContext_Log_exercise_minutes(ctx, field)
+			case "stress_level":
+				return ec.fieldContext_Log_stress_level(ctx, field)
+			case "notes":
+				return ec.fieldContext_Log_notes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Log_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Log", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_newLog_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_myLogs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_myLogs,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Mutation().MyLogs(ctx)
+		},
+		nil,
+		ec.marshalNLog2ᚕᚖgithubᚗcomᚋSBPHᚑMatthewᚋtestosteroneᚑtrackerᚋgraphᚋmodelᚐLogᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_myLogs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Log_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Log_user_id(ctx, field)
+			case "log_date":
+				return ec.fieldContext_Log_log_date(ctx, field)
+			case "energy_level":
+				return ec.fieldContext_Log_energy_level(ctx, field)
+			case "mood":
+				return ec.fieldContext_Log_mood(ctx, field)
+			case "libido":
+				return ec.fieldContext_Log_libido(ctx, field)
+			case "sleep_hours":
+				return ec.fieldContext_Log_sleep_hours(ctx, field)
+			case "exercise_minutes":
+				return ec.fieldContext_Log_exercise_minutes(ctx, field)
+			case "stress_level":
+				return ec.fieldContext_Log_stress_level(ctx, field)
+			case "notes":
+				return ec.fieldContext_Log_notes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Log_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Log", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -3042,27 +3192,13 @@ func (ec *executionContext) unmarshalInputLogInput(ctx context.Context, obj any)
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"user_id", "log_date", "energy_level", "mood", "libido", "sleep_hours", "exercise_minutes", "stress_level", "notes"}
+	fieldsInOrder := [...]string{"energy_level", "mood", "libido", "sleep_hours", "exercise_minutes", "stress_level", "notes"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "user_id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
-			data, err := ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
-		case "log_date":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("log_date"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.LogDate = data
 		case "energy_level":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("energy_level"))
 			data, err := ec.unmarshalNInt2int32(ctx, v)
@@ -3420,6 +3556,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "login":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_login(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "newLog":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_newLog(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "myLogs":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_myLogs(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

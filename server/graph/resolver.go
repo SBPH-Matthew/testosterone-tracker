@@ -8,4 +8,5 @@ import "github.com/SBPH-Matthew/testosterone-tracker/postgres"
 
 type Resolver struct {
 	UsersRepo postgres.UsersRepo
+	LogsRepo  postgres.LogsRepo
 }
